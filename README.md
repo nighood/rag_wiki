@@ -4,4 +4,5 @@ Additionally:
 ```python
 pip install llama-index-llms-azure-openai
 pip install llama-index-llms-huggingface
+pip install llama-index-embeddings-huggingface
 ```
