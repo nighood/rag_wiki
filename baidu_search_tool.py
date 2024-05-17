@@ -27,6 +27,7 @@ class Crawler:
     }
 
     def __init__(self, keyword):
+        self.keyword = keyword
         self.url = f'https://www.baidu.com/baidu?wd={quote(keyword)}&tn=monline_dg&ie=utf-8'
 
     def set_timeout(self, time):
@@ -77,7 +78,7 @@ class Crawler:
         '''从当前html中解析出搜索结果的url，保存到o_urls'''
         self.o_urls = list(set(re.findall(r'href="(http://www\.baidu\.com/link\?url=.*?)"', self.html)))
         self.all_o_urls.extend(self.o_urls)
-        self.next_page_url = f'https://www.baidu.com/s?wd={quote(keyword)}&pn={self.current_page * 10}'
+        self.next_page_url = f'https://www.baidu.com/s?wd={quote(self.keyword)}&pn={self.current_page * 10}'
 
     def get_real(self, o_url):
         '''获取重定向url指向的网址'''
@@ -122,7 +123,7 @@ class Crawler:
             self.switch_url()
         if save_path:
             self.save_all_urls(save_path)
-        logging.info(f"Finished crawling {self.total_pages} pages of search results for keyword '{keyword}'!")
+        # logging.info(f"Finished crawling {self.total_pages} pages of search results for keyword '{self.keyword}'!")
 
 """Baidu Search tool spec."""
 
@@ -153,7 +154,7 @@ class BaiduSearchToolSpec(BaseToolSpec):
             query (str): The query to be passed to Baidu search.
 
         """
-        crawler = Crawler(keyword=query)
+        crawler = Crawler(query)
         crawler.set_timeout(self.timeout)
         crawler.set_total_pages(self.num_pages)
         crawler.run()
@@ -172,7 +173,7 @@ def baidu_search(query: str, timeout: int = 60, num_pages: int = 1, top_k: int =
         query (str): The query to be passed to Baidu search.
 
     """
-    crawler = Crawler(keyword=query)
+    crawler = Crawler(query)
     crawler.set_timeout(timeout)
     crawler.set_total_pages(num_pages)
     crawler.run()
@@ -195,13 +196,13 @@ def baidu_search(query: str, timeout: int = 60, num_pages: int = 1, top_k: int =
 if __name__ == '__main__':
     # 示例用法
     keyword = 'INFP'
-    c = Crawler(keyword)
-    c.set_total_pages(2)
-    c.run(save_path=keyword+'.txt')
-    top_urls = c.get_top_k_urls(10)
-    print("Top 10 URLs:")
-    for url in top_urls:
-        print(url)
+    # c = Crawler(keyword)
+    # c.set_total_pages(2)
+    # c.run(save_path=keyword+'.txt')
+    # top_urls = c.get_top_k_urls(10)
+    # print("Top 10 URLs:")
+    # for url in top_urls:
+    #     print(url)
     
     # test BaiduSearchToolSpec
     baidu_spec = BaiduSearchToolSpec()
